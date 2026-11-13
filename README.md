@@ -25,18 +25,20 @@ Victor Guilherme Moreira Pinto · Orientador: Prof. Vitor Amadeu</p>
 <a href="#limitações">Limitações</a>
 </p>
 
+<br>
+
+<table>
+<tr align="center">
+<td width="160"><h2>4.000</h2>projetos processados</td>
+<td width="160"><h2>5</h2>critérios no AHP</td>
+<td width="160"><h2>0,0074</h2>razão de consistência</td>
+<td width="160"><h2>6</h2>tabelas no SQLite</td>
+</tr>
+</table>
+
 </div>
 
 <br>
-
-<table width="100%">
-<tr align="center">
-<td width="25%"><h2>4.000</h2>projetos processados</td>
-<td width="25%"><h2>5</h2>critérios no AHP</td>
-<td width="25%"><h2>0,0074</h2>razão de consistência</td>
-<td width="25%"><h2>6</h2>tabelas no SQLite</td>
-</tr>
-</table>
 
 > [!WARNING]
 > Os dados utilizados são **simulados**. Os resultados demonstram o funcionamento do método e **não representam projetos reais**.
@@ -49,30 +51,43 @@ O sistema **ordena projetos por necessidade de atenção ao risco**:
 - a **pontuação** de cada projeto vem da **soma ponderada** (**SAW**, *Simple Additive Weighting*);
 - cada **execução** fica registrada em um banco **SQLite**, o que permite rastrear quais julgamentos geraram quais pesos e qual *ranking*.
 
-```mermaid
-%%{init: {"theme": "base", "themeVariables": {"fontFamily": "Segoe UI, Arial, sans-serif", "fontSize": "14px", "lineColor": "#64748B"}}}%%
-flowchart LR
-    A["<b>Kaggle</b><br/>4.000 projetos"]:::dados --> B["<b>Tratamento</b><br/>5 critérios"]:::dados
-    B --> C["<b>AHP</b><br/>pesos e CR"]:::modelo
-    C --> D["<b>Normalização</b><br/>x/máx · mín/x"]:::modelo
-    D --> E["<b>SAW</b><br/>pontuação"]:::modelo
-    E --> F[("<b>SQLite</b><br/>execuções")]:::saida
-    E --> G["<b>CSV · Excel</b><br/>gráficos · log"]:::saida
-    E --> H["<b>Validação</b><br/>testes · sensibilidade"]:::valid
+<div align="center">
 
-    classDef dados fill:#E8F1FB,stroke:#1F4E79,stroke-width:2px,color:#0B2545
-    classDef modelo fill:#E6F4EE,stroke:#1B7F5F,stroke-width:2px,color:#0B3B2C
-    classDef saida fill:#F1EAF8,stroke:#6A3D9A,stroke-width:2px,color:#2E1A47
-    classDef valid fill:#FFF4E0,stroke:#C77700,stroke-width:2px,color:#5A3300
-```
+<table>
+<tr align="center">
+<td><b>1 · Dados</b><br>Kaggle<br>4.000 projetos</td>
+<td>➜</td>
+<td><b>2 · Tratamento</b><br>5 critérios</td>
+<td>➜</td>
+<td><b>3 · AHP</b><br>pesos · CI · CR</td>
+<td>➜</td>
+<td><b>4 · Normalização</b><br>x/máx · mín/x</td>
+<td>➜</td>
+<td><b>5 · SAW</b><br>pontuação<br>ranking</td>
+</tr>
+<tr align="center">
+<td colspan="9">▼</td>
+</tr>
+<tr align="center">
+<td colspan="3"><b>Saídas</b><br>SQLite · CSV · Excel · gráficos · log</td>
+<td colspan="3"></td>
+<td colspan="3"><b>Validação</b><br>testes · cenários · sensibilidade</td>
+</tr>
+</table>
+
+</div>
+
+<br>
 
 Uma pontuação maior indica **maior necessidade de atenção ao risco**. Ela não indica um projeto melhor nem mais rentável.
 
 ## Resultados
 
-<table width="100%">
+<div align="center">
+
+<table>
 <thead>
-<tr><th align="left" width="60%">Item</th><th align="center" width="40%">Valor</th></tr>
+<tr><th align="left">Item</th><th align="center">Valor</th></tr>
 </thead>
 <tbody>
 <tr><td>Projetos processados</td><td align="center"><b>4.000</b></td></tr>
@@ -84,9 +99,9 @@ Uma pontuação maior indica **maior necessidade de atenção ao risco**. Ela n�
 
 <br>
 
-<table width="100%">
+<table>
 <thead>
-<tr><th align="center" width="20%">Posição</th><th align="left" width="50%">Projeto</th><th align="center" width="30%">Pontuação</th></tr>
+<tr><th align="center">Posição</th><th align="left">Projeto</th><th align="center">Pontuação</th></tr>
 </thead>
 <tbody>
 <tr><td align="center">1º</td><td>PROJ_3003</td><td align="center">0,6687</td></tr>
@@ -94,6 +109,8 @@ Uma pontuação maior indica **maior necessidade de atenção ao risco**. Ela n�
 <tr><td align="center">3º</td><td>PROJ_1837</td><td align="center">0,6296</td></tr>
 </tbody>
 </table>
+
+</div>
 
 ### Peso nominal × influência efetiva
 
@@ -118,15 +135,17 @@ O critério C1 tem peso de 37,6% e responde por cerca de 47,7% da variação da 
 
 ## Critérios e pesos
 
-<table width="100%">
+<div align="center">
+
+<table>
 <thead>
 <tr>
-<th align="center" width="8%">Código</th>
-<th align="left" width="26%">Campo</th>
-<th align="left" width="24%">Interpretação adotada</th>
-<th align="left" width="18%">Sentido</th>
-<th align="center" width="12%">Normalização</th>
-<th align="center" width="12%">Peso AHP</th>
+<th align="center">Código</th>
+<th align="left">Campo</th>
+<th align="left">Interpretação adotada</th>
+<th align="left">Sentido</th>
+<th align="center">Normalização</th>
+<th align="center">Peso AHP</th>
 </tr>
 </thead>
 <tbody>
@@ -137,6 +156,10 @@ O critério C1 tem peso de 37,6% e responde por cerca de 47,7% da variação da 
 <tr><td align="center">C5</td><td><code>Vendor_Reliability_Score</code></td><td>Confiabilidade dos fornecedores</td><td>Menor = mais risco</td><td align="center">mín/x</td><td align="center"><b>7,38%</b></td></tr>
 </tbody>
 </table>
+
+</div>
+
+<br>
 
 > [!NOTE]
 > A documentação da base não detalha o significado e a escala desses campos. A interpretação acima é uma **hipótese do autor**.
@@ -175,63 +198,11 @@ Os julgamentos foram feitos pelo autor, em caráter experimental e sem consulta 
 
 O arquivo `resultados/priorizacao.db` é um banco relacional **SQLite** com seis tabelas.
 
-```mermaid
-%%{init: {"theme": "base", "themeVariables": {"fontFamily": "Segoe UI, Arial, sans-serif", "primaryColor": "#E8F1FB", "primaryBorderColor": "#1F4E79", "primaryTextColor": "#0B2545", "lineColor": "#64748B"}}}%%
-erDiagram
-    PROJETOS ||--o{ RESULTADOS : possui
-    EXECUCOES ||--o{ RESULTADOS : gera
-    EXECUCOES ||--o{ PESOS : define
-    EXECUCOES ||--o{ COMPARACOES_AHP : registra
-    CRITERIOS ||--o{ PESOS : recebe
-    CRITERIOS ||--o{ COMPARACOES_AHP : "criterio A e B"
+<div align="center">
 
-    PROJETOS {
-        TEXT project_id PK
-        REAL complexity_score
-        REAL schedule_pressure
-        REAL historical_risk_incidents
-        REAL resource_availability
-        REAL vendor_reliability_score
-    }
-    CRITERIOS {
-        TEXT codigo PK
-        TEXT campo
-        TEXT nome
-        TEXT sentido
-    }
-    EXECUCOES {
-        INTEGER id PK
-        TEXT data_hora
-        INTEGER n_projetos
-        REAL lambda_max
-        REAL ci
-        REAL cr
-        INTEGER consistente
-        TEXT observacao
-    }
-    COMPARACOES_AHP {
-        INTEGER execucao_id FK
-        TEXT criterio_a
-        TEXT criterio_b
-        REAL valor
-    }
-    PESOS {
-        INTEGER execucao_id FK
-        TEXT criterio
-        REAL peso
-    }
-    RESULTADOS {
-        INTEGER execucao_id FK
-        TEXT project_id
-        INTEGER ranking
-        REAL pontuacao
-        TEXT valores_usados
-    }
-```
-
-<table width="100%">
+<table>
 <thead>
-<tr><th align="left" width="24%">Tabela</th><th align="left" width="76%">O que armazena</th></tr>
+<tr><th align="left">Tabela</th><th align="left">O que armazena</th></tr>
 </thead>
 <tbody>
 <tr><td><code>projetos</code></td><td>Identificador de cada projeto e os valores dos cinco campos utilizados</td></tr>
@@ -243,7 +214,60 @@ erDiagram
 </tbody>
 </table>
 
+</div>
+
+### Relacionamentos
+
+<div align="center">
+
+<table>
+<thead>
+<tr><th align="left">Tabela de origem (1)</th><th align="center">Relação</th><th align="left">Tabela relacionada (N)</th><th align="left">Campo de ligação</th></tr>
+</thead>
+<tbody>
+<tr><td><code>projetos</code></td><td align="center">1 ➜ N</td><td><code>resultados</code></td><td><code>project_id</code></td></tr>
+<tr><td><code>execucoes</code></td><td align="center">1 ➜ N</td><td><code>resultados</code></td><td><code>execucao_id</code></td></tr>
+<tr><td><code>execucoes</code></td><td align="center">1 ➜ N</td><td><code>pesos</code></td><td><code>execucao_id</code></td></tr>
+<tr><td><code>execucoes</code></td><td align="center">1 ➜ N</td><td><code>comparacoes_ahp</code></td><td><code>execucao_id</code></td></tr>
+<tr><td><code>criterios</code></td><td align="center">1 ➜ N</td><td><code>pesos</code></td><td><code>criterio</code></td></tr>
+<tr><td><code>criterios</code></td><td align="center">1 ➜ N</td><td><code>comparacoes_ahp</code></td><td><code>criterio_a</code> e <code>criterio_b</code></td></tr>
+</tbody>
+</table>
+
+</div>
+
+<br>
+
 As tabelas `comparacoes_ahp`, `pesos` e `resultados` usam o campo `execucao_id` para identificar a execução a que pertencem. Isso preserva a rastreabilidade: **dados → comparações → pesos → execução → resultado**.
+
+<details>
+<summary><b>Colunas de cada tabela</b></summary>
+
+<br>
+
+<div align="center">
+
+<table>
+<thead>
+<tr><th align="left">Tabela</th><th align="left">Colunas</th></tr>
+</thead>
+<tbody>
+<tr><td><code>projetos</code></td><td><b>project_id</b> (PK), complexity_score, schedule_pressure, historical_risk_incidents, resource_availability, vendor_reliability_score</td></tr>
+<tr><td><code>criterios</code></td><td><b>codigo</b> (PK), campo, nome, sentido</td></tr>
+<tr><td><code>execucoes</code></td><td><b>id</b> (PK), data_hora, n_projetos, lambda_max, ci, cr, consistente, observacao</td></tr>
+<tr><td><code>comparacoes_ahp</code></td><td>execucao_id (FK), criterio_a, criterio_b, valor</td></tr>
+<tr><td><code>pesos</code></td><td>execucao_id (FK), criterio, peso</td></tr>
+<tr><td><code>resultados</code></td><td>execucao_id (FK), project_id, ranking, pontuacao, valores_usados</td></tr>
+</tbody>
+</table>
+
+</div>
+
+<br>
+
+PK = chave primária · FK = chave estrangeira
+
+</details>
 
 O banco guarda a execução principal. Os resultados da sensibilidade e dos cenários de pesos ficam no Excel e no *log*. O repositório inclui uma cópia do `priorizacao.db` gerada pela execução apresentada no trabalho.
 
@@ -297,9 +321,11 @@ python src/main.py
 
 O programa lê `dados/project_risk_raw_dataset.csv` e grava tudo em `resultados/`:
 
-<table width="100%">
+<div align="center">
+
+<table>
 <thead>
-<tr><th align="left" width="24%">Saída</th><th align="left" width="76%">Conteúdo</th></tr>
+<tr><th align="left">Saída</th><th align="left">Conteúdo</th></tr>
 </thead>
 <tbody>
 <tr><td><code>ranking_saw.csv</code></td><td>Ranking completo dos 4.000 projetos</td></tr>
@@ -309,6 +335,8 @@ O programa lê `dados/project_risk_raw_dataset.csv` e grava tudo em `resultados/
 <tr><td><code>execucao.log</code></td><td>Registro da execução e dos testes</td></tr>
 </tbody>
 </table>
+
+</div>
 
 <br>
 
@@ -358,13 +386,15 @@ O modelo é avaliado em cinco frentes, e todas rodam a cada execução.
 
 **2. Cenários controlados.** Projetos sintéticos com resultado esperado definido antes da execução, construídos com os valores extremos da própria base.
 
-<table width="100%">
+<div align="center">
+
+<table>
 <thead>
 <tr>
-<th align="left" width="20%">Cenário</th>
-<th align="left" width="40%">Construção</th>
-<th align="left" width="20%">Esperado</th>
-<th align="left" width="20%">Obtido</th>
+<th align="left">Cenário</th>
+<th align="left">Construção</th>
+<th align="left">Esperado</th>
+<th align="left">Obtido</th>
 </tr>
 </thead>
 <tbody>
@@ -374,13 +404,17 @@ O modelo é avaliado em cinco frentes, e todas rodam a cada execução.
 </tbody>
 </table>
 
+</div>
+
 <br>
 
 **3. Análise de sensibilidade.** 200 simulações, com cada peso multiplicado por um fator sorteado entre 0,8 e 1,2 e renormalização para somar 1 (semente 42).
 
-<table width="100%">
+<div align="center">
+
+<table>
 <thead>
-<tr><th align="left" width="60%">Medida</th><th align="center" width="20%">Média</th><th align="center" width="20%">Mínimo</th></tr>
+<tr><th align="left">Medida</th><th align="center">Média</th><th align="center">Mínimo</th></tr>
 </thead>
 <tbody>
 <tr><td>Correlação de Spearman com o ranking base</td><td align="center">0,9966</td><td align="center">0,9864</td></tr>
@@ -388,13 +422,17 @@ O modelo é avaliado em cinco frentes, e todas rodam a cada execução.
 </tbody>
 </table>
 
+</div>
+
 <br>
 
 **4. Cenários de pesos.** Ranking recalculado com pesos iguais e com cada critério assumindo 50% do peso total.
 
-<table width="100%">
+<div align="center">
+
+<table>
 <thead>
-<tr><th align="left" width="60%">Cenário</th><th align="center" width="20%">Spearman vs. base</th><th align="center" width="20%">Top 100 em comum</th></tr>
+<tr><th align="left">Cenário</th><th align="center">Spearman vs. base</th><th align="center">Top 100 em comum</th></tr>
 </thead>
 <tbody>
 <tr><td>Pesos iguais</td><td align="center">0,909</td><td align="center">60</td></tr>
@@ -405,6 +443,8 @@ O modelo é avaliado em cinco frentes, e todas rodam a cada execução.
 <tr><td>C5 com 50%</td><td align="center">0,843</td><td align="center">40</td></tr>
 </tbody>
 </table>
+
+</div>
 
 <br>
 
