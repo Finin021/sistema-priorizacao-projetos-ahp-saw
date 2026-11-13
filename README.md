@@ -1,132 +1,113 @@
-# Sistema de Apoio à Decisão para Priorização de Projetos baseado nos Métodos AHP e SAW
+<div align="center">
 
-![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)
-![SQLite](https://img.shields.io/badge/Banco-SQLite-003B57?logo=sqlite&logoColor=white)
-![Método](https://img.shields.io/badge/M%C3%A9todo-AHP%20%2B%20SAW-1F4E79)
-![Dados](https://img.shields.io/badge/Dados-simulados-orange)
-![Licença dos dados](https://img.shields.io/badge/Dados-CDLA--Permissive--1.0-green)
+# Sistema de Apoio à Decisão para Priorização de Projetos
 
-Protótipo desenvolvido como **Trabalho de Conclusão de Curso** de Engenharia da Computação (Universidade Veiga de Almeida), na área de **Banco de Dados e Sistemas de Informação**.
+### baseado nos métodos AHP e SAW
 
-O sistema **ordena projetos por necessidade de atenção ao risco**. Os pesos dos critérios são obtidos pelo método **AHP** (*Analytic Hierarchy Process*), a pontuação de cada projeto é calculada pela **soma ponderada** (**SAW**, *Simple Additive Weighting*) e cada execução fica registrada em um banco **SQLite**, o que permite rastrear quais julgamentos produziram quais pesos e qual *ranking*.
+![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
+![pandas](https://img.shields.io/badge/pandas-150458?style=for-the-badge&logo=pandas&logoColor=white)
+![NumPy](https://img.shields.io/badge/NumPy-013243?style=for-the-badge&logo=numpy&logoColor=white)
+![Matplotlib](https://img.shields.io/badge/Matplotlib-11557C?style=for-the-badge)
+![openpyxl](https://img.shields.io/badge/openpyxl-217346?style=for-the-badge&logo=microsoftexcel&logoColor=white)
 
-| | |
-|---|---|
-| **Autor** | Victor Guilherme Moreira Pinto |
-| **Orientador** | Prof. Vitor Amadeu |
-| **Curso** | Engenharia da Computação, Universidade Veiga de Almeida |
-| **Linguagem** | Python |
+**Trabalho de Conclusão de Curso · Engenharia da Computação · Universidade Veiga de Almeida**
 
-> **Aviso importante:** os dados utilizados são **simulados**. Os resultados demonstram o funcionamento do método e **não representam projetos reais**.
+Victor Guilherme Moreira Pinto · Orientador: Prof. Vitor Amadeu
 
----
+[Visão geral](#visão-geral) · [Resultados](#resultados) · [Critérios e pesos](#critérios-e-pesos) · [Banco de dados](#banco-de-dados) · [Como executar](#como-executar) · [Validação](#validação) · [Limitações](#limitações)
 
-## Sumário
-
-1. [Visão geral](#1-visão-geral)
-2. [Resultados da execução principal](#2-resultados-da-execução-principal)
-3. [Critérios e pesos](#3-critérios-e-pesos)
-4. [Banco de dados](#4-banco-de-dados)
-5. [Como executar](#5-como-executar)
-6. [Estrutura do repositório](#6-estrutura-do-repositório)
-7. [Validação](#7-validação)
-8. [Limitações](#8-limitações)
-9. [Dados e licença](#9-dados-e-licença)
-10. [Referências](#10-referências)
-11. [Como citar](#11-como-citar)
-12. [Uso de inteligência artificial](#12-uso-de-inteligência-artificial)
-13. [English summary](#13-english-summary)
+</div>
 
 ---
 
-## 1. Visão geral
+> [!WARNING]
+> Os dados utilizados são **simulados**. Os resultados demonstram o funcionamento do método e **não representam projetos reais**.
 
-```text
-Kaggle (CSV, 4.000 projetos x 51 colunas)
-        │
-        ▼
-Tratamento e seleção de 5 critérios
-        │
-        ▼
-AHP ── 10 comparações par a par ─► matriz 5x5 ─► pesos ─► λmax, CI, CR
-        │                                              (CR > 0,10 interrompe a execução)
-        ▼
-Normalização (x/máx ou mín/x, conforme o sentido de cada critério)
-        │
-        ▼
-SAW ── pontuação = soma(peso x valor normalizado) ─► ranking
-        │
-        ├──► Validação: testes, cenários controlados, sensibilidade, cenários de pesos
-        │
-        ▼
-SQLite (priorizacao.db)  +  CSV  +  Excel  +  gráficos  +  log
+## Visão geral
+
+O sistema **ordena projetos por necessidade de atenção ao risco**:
+
+- os **pesos** dos critérios vêm do método **AHP** (*Analytic Hierarchy Process*), com verificação de consistência;
+- a **pontuação** de cada projeto vem da **soma ponderada** (**SAW**, *Simple Additive Weighting*);
+- cada **execução** fica registrada em um banco **SQLite**, o que permite rastrear quais julgamentos geraram quais pesos e qual *ranking*.
+
+```mermaid
+flowchart LR
+    A["Kaggle<br/>CSV: 4.000 projetos x 51 colunas"] --> B["Tratamento<br/>5 critérios"]
+    B --> C["AHP<br/>10 comparações, pesos, CI e CR"]
+    C --> D["Normalização<br/>x/máx ou mín/x"]
+    D --> E["SAW<br/>pontuação e ranking"]
+    E --> F["Validação<br/>testes, cenários, sensibilidade"]
+    E --> G[("SQLite<br/>priorizacao.db")]
+    E --> H["CSV, Excel,<br/>gráficos e log"]
 ```
 
 Uma pontuação maior indica **maior necessidade de atenção ao risco**. Ela não indica um projeto melhor nem mais rentável.
 
----
-
-## 2. Resultados da execução principal
+## Resultados
 
 | Item | Valor |
 |---|---|
-| Projetos processados | 4.000 |
+| Projetos processados | **4.000** |
 | λmax | 5,0331 |
 | CI (Índice de Consistência) | 0,0083 |
-| CR (Razão de Consistência) | **0,0074** (julgamentos consistentes; limite de 0,10) |
-
-**Três primeiros do *ranking*:**
+| CR (Razão de Consistência) | **0,0074** · consistente (limite de 0,10) |
 
 | Posição | Projeto | Pontuação |
-|---|---|---|
+|:---:|---|:---:|
 | 1º | PROJ_3003 | 0,6687 |
 | 2º | PROJ_2001 | 0,6322 |
 | 3º | PROJ_1837 | 0,6296 |
 
-### Gráficos
+### Peso nominal × influência efetiva
 
-**Peso nominal do AHP × influência efetiva de cada critério no *ranking***
+<p align="center">
+  <img src="resultados/pesos_vs_influencia.png" alt="Pesos do AHP e influência efetiva de cada critério" width="820">
+</p>
 
-![Pesos versus influência](resultados/pesos_vs_influencia.png)
+O critério C1 tem peso de 37,6% e responde por cerca de 47,7% da variação da pontuação. O C5 tem peso de 7,4% e influência de cerca de 2%. **O peso do AHP não corresponde, necessariamente, à influência efetiva no resultado**: ela também depende da dispersão dos dados e da normalização.
 
-O critério C1 tem peso de 37,6% e responde por cerca de 47,7% da variação da pontuação. Já o C5 tem peso de 7,4% e influência de cerca de 2%. Ou seja, **o peso atribuído pelo AHP não corresponde, necessariamente, à influência efetiva no resultado**: ela também depende da dispersão dos dados e da normalização.
+<details>
+<summary><b>Mais gráficos</b></summary>
 
-**Contribuição de cada critério nos 20 primeiros projetos**
+<p align="center">
+  <img src="resultados/top20_contribuicoes.png" alt="Contribuição de cada critério nos 20 primeiros projetos" width="820">
+</p>
 
-![Top 20](resultados/top20_contribuicoes.png)
+<p align="center">
+  <img src="resultados/distribuicao_pontuacao.png" alt="Distribuição da pontuação SAW" width="820">
+</p>
 
-**Distribuição da pontuação SAW dos 4.000 projetos**
+</details>
 
-![Distribuição](resultados/distribuicao_pontuacao.png)
-
----
-
-## 3. Critérios e pesos
+## Critérios e pesos
 
 | Código | Campo | Interpretação adotada | Sentido | Normalização | Peso AHP |
-|---|---|---|---|---|---|
+|:---:|---|---|---|:---:|:---:|
 | C1 | `Complexity_Score` | Complexidade do projeto | Maior = mais risco | x/máx | **37,60%** |
 | C2 | `Schedule_Pressure` | Pressão sobre o cronograma | Maior = mais risco | x/máx | **21,47%** |
 | C3 | `Historical_Risk_Incidents` | Incidentes históricos de risco | Maior = mais risco | x/máx | **21,47%** |
 | C4 | `Resource_Availability` | Disponibilidade de recursos | Menor = mais risco | mín/x | **12,09%** |
 | C5 | `Vendor_Reliability_Score` | Confiabilidade dos fornecedores | Menor = mais risco | mín/x | **7,38%** |
 
-A documentação da base não detalha o significado e a escala desses campos. **A interpretação acima é uma hipótese do autor.**
+> [!NOTE]
+> A documentação da base não detalha o significado e a escala desses campos. A interpretação acima é uma **hipótese do autor**.
 
 ### Fórmulas
 
 **Pesos (AHP):** autovetor principal da matriz de comparação *A*, com os pesos somando 1.
 
 ```text
-A · w = λmax · w        e        soma(w_i) = 1
-CI = (λmax − n) / (n − 1)        CR = CI / RI        (RI = 1,12 para n = 5)
+A · w = λmax · w          soma(w_i) = 1
+CI = (λmax − n) / (n − 1)  CR = CI / RI      (RI = 1,12 para n = 5)
 ```
 
 **Normalização:**
 
 ```text
-critérios "maior = mais risco":   r_ij = x_ij / máx_j(x_ij)
-critérios "menor = mais risco":   r_ij = mín_j(x_ij) / x_ij
+maior = mais risco:   r_ij = x_ij / máx_j(x_ij)
+menor = mais risco:   r_ij = mín_j(x_ij) / x_ij
 ```
 
 **Pontuação (SAW):**
@@ -141,13 +122,62 @@ Os projetos são ordenados da maior para a menor pontuação e, em caso de empat
 
 Os julgamentos foram feitos pelo autor, em caráter experimental e sem consulta a especialistas. Cada um está justificado em [`documentacao/julgamentos_ahp.json`](documentacao/julgamentos_ahp.json). Para testar outros pesos, edite esse arquivo e execute o programa novamente. Se o CR passar de 0,10, a execução é interrompida.
 
----
-
-## 4. Banco de dados
+## Banco de dados
 
 O arquivo `resultados/priorizacao.db` é um banco relacional **SQLite** com seis tabelas.
 
-![Modelo relacional do banco priorizacao.db](docs/modelo_relacional.png)
+```mermaid
+erDiagram
+    PROJETOS ||--o{ RESULTADOS : possui
+    EXECUCOES ||--o{ RESULTADOS : gera
+    EXECUCOES ||--o{ PESOS : define
+    EXECUCOES ||--o{ COMPARACOES_AHP : registra
+    CRITERIOS ||--o{ PESOS : recebe
+    CRITERIOS ||--o{ COMPARACOES_AHP : "criterio A e B"
+
+    PROJETOS {
+        TEXT project_id PK
+        REAL complexity_score
+        REAL schedule_pressure
+        REAL historical_risk_incidents
+        REAL resource_availability
+        REAL vendor_reliability_score
+    }
+    CRITERIOS {
+        TEXT codigo PK
+        TEXT campo
+        TEXT nome
+        TEXT sentido
+    }
+    EXECUCOES {
+        INTEGER id PK
+        TEXT data_hora
+        INTEGER n_projetos
+        REAL lambda_max
+        REAL ci
+        REAL cr
+        INTEGER consistente
+        TEXT observacao
+    }
+    COMPARACOES_AHP {
+        INTEGER execucao_id FK
+        TEXT criterio_a
+        TEXT criterio_b
+        REAL valor
+    }
+    PESOS {
+        INTEGER execucao_id FK
+        TEXT criterio
+        REAL peso
+    }
+    RESULTADOS {
+        INTEGER execucao_id FK
+        TEXT project_id
+        INTEGER ranking
+        REAL pontuacao
+        TEXT valores_usados
+    }
+```
 
 | Tabela | O que armazena |
 |---|---|
@@ -160,9 +190,10 @@ O arquivo `resultados/priorizacao.db` é um banco relacional **SQLite** com seis
 
 As tabelas `comparacoes_ahp`, `pesos` e `resultados` usam o campo `execucao_id` para identificar a execução a que pertencem. Isso preserva a rastreabilidade: **dados → comparações → pesos → execução → resultado**.
 
-O banco guarda a execução principal. Os resultados da análise de sensibilidade e dos cenários de pesos ficam no arquivo Excel e no *log*. O repositório inclui uma cópia do `priorizacao.db` gerada pela execução apresentada no trabalho. Cada nova execução adiciona um registro ao mesmo banco.
+O banco guarda a execução principal. Os resultados da sensibilidade e dos cenários de pesos ficam no Excel e no *log*. O repositório inclui uma cópia do `priorizacao.db` gerada pela execução apresentada no trabalho.
 
-### Consultas de exemplo
+<details>
+<summary><b>Consultas SQL de exemplo</b></summary>
 
 ```sql
 -- 10 primeiros da última execução
@@ -186,9 +217,9 @@ FROM execucoes;
 
 Para abrir o banco, use o **DB Browser for SQLite** ou a extensão *SQLite Viewer* do VS Code.
 
----
+</details>
 
-## 5. Como executar
+## Como executar
 
 Requisitos: Python 3.10 ou superior.
 
@@ -209,7 +240,7 @@ pip install -r requirements.txt
 python src/main.py
 ```
 
-O programa lê `dados/project_risk_raw_dataset.csv` e grava tudo na pasta `resultados/`.
+O programa lê `dados/project_risk_raw_dataset.csv` e grava tudo em `resultados/`:
 
 | Saída | Conteúdo |
 |---|---|
@@ -219,11 +250,10 @@ O programa lê `dados/project_risk_raw_dataset.csv` e grava tudo na pasta `resul
 | `*.png` | Gráficos |
 | `execucao.log` | Registro da execução e dos testes |
 
-Cada execução adiciona um novo registro ao banco. Para começar do zero, apague `resultados/priorizacao.db` antes de executar.
+Cada execução adiciona um registro ao banco. Para começar do zero, apague `resultados/priorizacao.db` antes de executar.
 
----
-
-## 6. Estrutura do repositório
+<details>
+<summary><b>Estrutura do repositório</b></summary>
 
 ```text
 sistema-priorizacao-projetos-ahp-saw/
@@ -246,8 +276,6 @@ sistema-priorizacao-projetos-ahp-saw/
 │   └── FONTE_DOS_DADOS.md
 ├── documentacao/
 │   └── julgamentos_ahp.json       # julgamentos do AHP e justificativas
-├── docs/
-│   └── modelo_relacional.png      # figura do banco de dados
 └── resultados/
     ├── ranking_saw.csv
     ├── resultados.xlsx
@@ -258,33 +286,33 @@ sistema-priorizacao-projetos-ahp-saw/
     └── execucao.log
 ```
 
----
+</details>
 
-## 7. Validação
+## Validação
 
 O modelo é avaliado em cinco frentes, e todas rodam a cada execução.
 
-**a) Testes automatizados (7).** Cálculo manual da pontuação conferido, direção de preferência de cada critério, CR ≤ 0,10, pesos positivos que somam 1, ordem decrescente do *ranking*, pontuações no intervalo (0, 1] e concordância entre o autovetor e a média das colunas.
+**1. Testes automatizados (7).** Cálculo manual conferido, direção de preferência, CR ≤ 0,10, pesos positivos que somam 1, ordem do *ranking*, pontuações em (0, 1] e concordância entre autovetor e média das colunas.
 
-**b) Cenários controlados.** Projetos sintéticos, com resultado esperado definido antes da execução, construídos com os valores extremos da própria base.
+**2. Cenários controlados.** Projetos sintéticos com resultado esperado definido antes da execução, construídos com os valores extremos da própria base.
 
-| Cenário | Construção | Resultado esperado | Resultado obtido |
+| Cenário | Construção | Esperado | Obtido |
 |---|---|---|---|
-| S1 – Dominância | Maior risco em todos os critérios | 1º lugar | 1º lugar |
-| S2 – Dominado | Menor risco em todos os critérios | Últimas posições | 4.004º de 4.004 |
-| S3 × S4 – Conflito | S3: só a complexidade em maior risco. S4: só recursos e fornecedores em maior risco | S3 à frente de S4, pois o peso de C1 supera o de C4 + C5 | S3 = 0,419 e S4 = 0,256 |
+| S1 · Dominância | Maior risco em todos os critérios | 1º lugar | 1º lugar |
+| S2 · Dominado | Menor risco em todos os critérios | Últimas posições | 4.004º de 4.004 |
+| S3 × S4 · Conflito | S3: só a complexidade em maior risco. S4: só recursos e fornecedores em maior risco | S3 à frente de S4 | S3 = 0,419 · S4 = 0,256 |
 
-**c) Análise de sensibilidade.** 200 simulações, com cada peso multiplicado por um fator sorteado entre 0,8 e 1,2 e renormalização para somar 1 (semente 42). Cada *ranking* é comparado ao base pelo coeficiente de Spearman e pela retenção dos 100 primeiros.
+**3. Análise de sensibilidade.** 200 simulações, com cada peso multiplicado por um fator sorteado entre 0,8 e 1,2 e renormalização para somar 1 (semente 42).
 
 | Medida | Média | Mínimo |
-|---|---|---|
-| Correlação de Spearman | 0,9966 | 0,9864 |
+|---|:---:|:---:|
+| Correlação de Spearman com o ranking base | 0,9966 | 0,9864 |
 | Projetos do top 100 mantidos | 90,4% | 81% |
 
-**d) Cenários de pesos.** *Ranking* recalculado com pesos iguais e com cada critério assumindo 50% do peso total.
+**4. Cenários de pesos.** Ranking recalculado com pesos iguais e com cada critério assumindo 50% do peso total.
 
 | Cenário | Spearman vs. base | Top 100 em comum |
-|---|---|---|
+|---|:---:|:---:|
 | Pesos iguais | 0,909 | 60 |
 | C1 com 50% | 0,960 | 68 |
 | C2 com 50% | 0,740 | 13 |
@@ -292,38 +320,29 @@ O modelo é avaliado em cinco frentes, e todas rodam a cada execução.
 | C4 com 50% | 0,583 | 25 |
 | C5 com 50% | 0,843 | 40 |
 
-**e) Comparação exploratória.** A pontuação é comparada ao campo `Risk_Level` da base (Spearman de aproximadamente 0,33). Como a origem desse campo é desconhecida, essa comparação é **exploratória e não constitui validação definitiva**.
+**5. Comparação exploratória.** A pontuação é comparada ao campo `Risk_Level` da base (Spearman de aproximadamente 0,33). Como a origem desse campo é desconhecida, a comparação é **exploratória e não constitui validação definitiva**.
 
----
-
-## 8. Limitações
+## Limitações
 
 - Os dados são **simulados** e os campos **não têm dicionário oficial detalhado**; a interpretação dos critérios é uma hipótese do autor.
-- Os julgamentos do AHP foram feitos **apenas pelo autor**, sem consulta a especialistas. Um CR baixo mostra coerência interna, não validade externa.
+- Os julgamentos do AHP foram feitos **apenas pelo autor**. Um CR baixo mostra coerência interna, não validade externa.
 - A normalização usa os valores extremos do conjunto, então incluir ou excluir projetos pode alterar a pontuação dos demais.
-- O peso nominal de um critério **não é igual** à sua influência efetiva no *ranking* (seção 2).
+- O peso nominal de um critério **não é igual** à sua influência efetiva no *ranking*.
 - Os resultados **não devem ser generalizados** para projetos reais.
 
-Trabalhos futuros: validar os julgamentos com gestores, aplicar o modelo a dados reais anonimizados, comparar com outros métodos (como o TOPSIS) e outras normalizações, e desenvolver uma interface *web*.
+**Trabalhos futuros:** validar os julgamentos com gestores, aplicar o modelo a dados reais anonimizados, comparar com outros métodos (como o TOPSIS) e outras normalizações, e desenvolver uma interface web.
 
----
+## Dados e licença
 
-## 9. Dados e licença
-
-Base utilizada: **Project management Risk Raw**, de Tarek Adam, disponível no Kaggle:
-https://www.kaggle.com/datasets/ka66ledata/project-management-risk-raw
-
-Licença dos dados: **Community Data License Agreement – Permissive, Version 1.0 (CDLA-Permissive-1.0)**: https://cdla.dev/permissive-1-0/
-
+- **Base:** *Project management Risk Raw*, de Tarek Adam, no [Kaggle](https://www.kaggle.com/datasets/ka66ledata/project-management-risk-raw).
+- **Licença dos dados:** [CDLA-Permissive-1.0](https://cdla.dev/permissive-1-0/).
 - `dados/project_risk_raw_dataset.csv` é a cópia original, sem alterações.
-- `dados/dados_preparados.csv` é um arquivo **derivado**, gerado pelo programa, com apenas o `Project_ID` e as cinco colunas dos critérios.
-- A página da base informa que os dados são simulados.
+- `dados/dados_preparados.csv` é um arquivo **derivado**, gerado pelo programa, com o `Project_ID` e as cinco colunas dos critérios.
 
 Mais detalhes em [`dados/FONTE_DOS_DADOS.md`](dados/FONTE_DOS_DADOS.md).
 
----
-
-## 10. Referências
+<details>
+<summary><b>Referências</b></summary>
 
 - ADAM, Tarek. *Project management Risk Raw*. Kaggle, 2025. Disponível em: https://www.kaggle.com/datasets/ka66ledata/project-management-risk-raw.
 - ELBOK, Ghizlane; BERRADO, Abdelaziz. Project Prioritization for Portfolio Selection using MCDA. In: International Conference on Industrial Engineering and Operations Management, 2020. IEOM Society, 2020. Disponível em: http://www.ieomsociety.org/ieom2020/papers/808.pdf.
@@ -335,9 +354,9 @@ Mais detalhes em [`dados/FONTE_DOS_DADOS.md`](dados/FONTE_DOS_DADOS.md).
 - TRIANTAPHYLLOU, Evangelos; SÁNCHEZ, Alfonso. A sensitivity analysis approach for some deterministic multi-criteria decision-making methods. *Decision Sciences*, v. 28, n. 1, p. 151-194, 1997.
 - VARGAS, Ricardo Viana. Using the Analytic Hierarchy Process (AHP) to Select and Prioritize Projects in a Portfolio. In: PMI Global Congress, 2010. Disponível em: https://www.pmi.org/learning/library/analytic-hierarchy-process-prioritize-projects-6608.
 
----
+</details>
 
-## 11. Como citar
+## Como citar
 
 ```text
 PINTO, Victor Guilherme Moreira. Sistema de Apoio à Decisão para Priorização de
@@ -345,21 +364,16 @@ Projetos baseado nos Métodos AHP e SAW: código-fonte. [S. l.]: GitHub, 2026.
 Disponível em: https://github.com/Finin021/sistema-priorizacao-projetos-ahp-saw.
 ```
 
----
-
-## 12. Uso de inteligência artificial
+## Uso de inteligência artificial
 
 Durante a elaboração deste Trabalho de Conclusão de Curso, o autor utilizou as ferramentas de Inteligência Artificial Generativa Microsoft Copilot, *powered by GPT-5.6*, desenvolvido pela Microsoft, e Claude Sonnet 5.5, desenvolvido pela Anthropic, exclusivamente como instrumentos de apoio à estruturação do texto, à revisão da redação e ao desenvolvimento e à documentação do código-fonte. Todo o conteúdo gerado ou sugerido foi revisado, validado e editado pelo autor, que assume integral responsabilidade por ele.
 
 ---
 
-## 13. English summary
+<div align="center">
 
-Decision support system that ranks0 projects, λmax = 5.0331, CI = 0.0083, **CR = 0.0074**.
+**English summary** · Decision support system that ranks projects by risk-attention priority using **AHP** (weights with a consistency check, CR ≤ 0.10) and **SAW** (weighted sum), with every run stored in **SQLite**. It uses a synthetic public dataset (Kaggle, CDLA-Permissive-1.0), so results demonstrate the method and do not represent real projects. Main run: 4,000 projects, CR = 0.0074.
 
-```bash
-pip install -r requirements.txt
-python src/main.py
-```
+`pip install -r requirements.txt` · `python src/main.py`
 
-Outputs (ranking CSV, Excel workbook, charts, log and SQLite database) are written to `resultados/`.
+</div>
