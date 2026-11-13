@@ -1,25 +1,42 @@
 <div align="center">
 
-# Sistema de Apoio à Decisão para Priorização de Projetos
+<h1>Sistema de Apoio à Decisão para Priorização de Projetos</h1>
+<h3>baseado nos métodos AHP e SAW</h3>
 
-### baseado nos métodos AHP e SAW
+<p>
+<img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
+<img src="https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white" alt="SQLite">
+<img src="https://img.shields.io/badge/pandas-150458?style=for-the-badge&logo=pandas&logoColor=white" alt="pandas">
+<img src="https://img.shields.io/badge/NumPy-013243?style=for-the-badge&logo=numpy&logoColor=white" alt="NumPy">
+<img src="https://img.shields.io/badge/Matplotlib-11557C?style=for-the-badge" alt="Matplotlib">
+<img src="https://img.shields.io/badge/openpyxl-217346?style=for-the-badge&logo=microsoftexcel&logoColor=white" alt="openpyxl">
+</p>
 
-![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
-![pandas](https://img.shields.io/badge/pandas-150458?style=for-the-badge&logo=pandas&logoColor=white)
-![NumPy](https://img.shields.io/badge/NumPy-013243?style=for-the-badge&logo=numpy&logoColor=white)
-![Matplotlib](https://img.shields.io/badge/Matplotlib-11557C?style=for-the-badge)
-![openpyxl](https://img.shields.io/badge/openpyxl-217346?style=for-the-badge&logo=microsoftexcel&logoColor=white)
+<p><b>Trabalho de Conclusão de Curso · Engenharia da Computação · Universidade Veiga de Almeida</b><br>
+Victor Guilherme Moreira Pinto · Orientador: Prof. Vitor Amadeu</p>
 
-**Trabalho de Conclusão de Curso · Engenharia da Computação · Universidade Veiga de Almeida**
-
-Victor Guilherme Moreira Pinto · Orientador: Prof. Vitor Amadeu
-
-[Visão geral](#visão-geral) · [Resultados](#resultados) · [Critérios e pesos](#critérios-e-pesos) · [Banco de dados](#banco-de-dados) · [Como executar](#como-executar) · [Validação](#validação) · [Limitações](#limitações)
+<p>
+<a href="#visão-geral">Visão geral</a> ·
+<a href="#resultados">Resultados</a> ·
+<a href="#critérios-e-pesos">Critérios</a> ·
+<a href="#banco-de-dados">Banco de dados</a> ·
+<a href="#como-executar">Como executar</a> ·
+<a href="#validação">Validação</a> ·
+<a href="#limitações">Limitações</a>
+</p>
 
 </div>
 
----
+<br>
+
+<table width="100%">
+<tr align="center">
+<td width="25%"><h2>4.000</h2>projetos processados</td>
+<td width="25%"><h2>5</h2>critérios no AHP</td>
+<td width="25%"><h2>0,0074</h2>razão de consistência</td>
+<td width="25%"><h2>6</h2>tabelas no SQLite</td>
+</tr>
+</table>
 
 > [!WARNING]
 > Os dados utilizados são **simulados**. Os resultados demonstram o funcionamento do método e **não representam projetos reais**.
@@ -33,32 +50,50 @@ O sistema **ordena projetos por necessidade de atenção ao risco**:
 - cada **execução** fica registrada em um banco **SQLite**, o que permite rastrear quais julgamentos geraram quais pesos e qual *ranking*.
 
 ```mermaid
+%%{init: {"theme": "base", "themeVariables": {"fontFamily": "Segoe UI, Arial, sans-serif", "fontSize": "14px", "lineColor": "#64748B"}}}%%
 flowchart LR
-    A["Kaggle<br/>CSV: 4.000 projetos x 51 colunas"] --> B["Tratamento<br/>5 critérios"]
-    B --> C["AHP<br/>10 comparações, pesos, CI e CR"]
-    C --> D["Normalização<br/>x/máx ou mín/x"]
-    D --> E["SAW<br/>pontuação e ranking"]
-    E --> F["Validação<br/>testes, cenários, sensibilidade"]
-    E --> G[("SQLite<br/>priorizacao.db")]
-    E --> H["CSV, Excel,<br/>gráficos e log"]
+    A["<b>Kaggle</b><br/>4.000 projetos"]:::dados --> B["<b>Tratamento</b><br/>5 critérios"]:::dados
+    B --> C["<b>AHP</b><br/>pesos e CR"]:::modelo
+    C --> D["<b>Normalização</b><br/>x/máx · mín/x"]:::modelo
+    D --> E["<b>SAW</b><br/>pontuação"]:::modelo
+    E --> F[("<b>SQLite</b><br/>execuções")]:::saida
+    E --> G["<b>CSV · Excel</b><br/>gráficos · log"]:::saida
+    E --> H["<b>Validação</b><br/>testes · sensibilidade"]:::valid
+
+    classDef dados fill:#E8F1FB,stroke:#1F4E79,stroke-width:2px,color:#0B2545
+    classDef modelo fill:#E6F4EE,stroke:#1B7F5F,stroke-width:2px,color:#0B3B2C
+    classDef saida fill:#F1EAF8,stroke:#6A3D9A,stroke-width:2px,color:#2E1A47
+    classDef valid fill:#FFF4E0,stroke:#C77700,stroke-width:2px,color:#5A3300
 ```
 
 Uma pontuação maior indica **maior necessidade de atenção ao risco**. Ela não indica um projeto melhor nem mais rentável.
 
 ## Resultados
 
-| Item | Valor |
-|---|---|
-| Projetos processados | **4.000** |
-| λmax | 5,0331 |
-| CI (Índice de Consistência) | 0,0083 |
-| CR (Razão de Consistência) | **0,0074** · consistente (limite de 0,10) |
+<table width="100%">
+<thead>
+<tr><th align="left" width="60%">Item</th><th align="center" width="40%">Valor</th></tr>
+</thead>
+<tbody>
+<tr><td>Projetos processados</td><td align="center"><b>4.000</b></td></tr>
+<tr><td>λmax</td><td align="center">5,0331</td></tr>
+<tr><td>CI (Índice de Consistência)</td><td align="center">0,0083</td></tr>
+<tr><td>CR (Razão de Consistência)</td><td align="center"><b>0,0074</b> · consistente (limite de 0,10)</td></tr>
+</tbody>
+</table>
 
-| Posição | Projeto | Pontuação |
-|:---:|---|:---:|
-| 1º | PROJ_3003 | 0,6687 |
-| 2º | PROJ_2001 | 0,6322 |
-| 3º | PROJ_1837 | 0,6296 |
+<br>
+
+<table width="100%">
+<thead>
+<tr><th align="center" width="20%">Posição</th><th align="left" width="50%">Projeto</th><th align="center" width="30%">Pontuação</th></tr>
+</thead>
+<tbody>
+<tr><td align="center">1º</td><td>PROJ_3003</td><td align="center">0,6687</td></tr>
+<tr><td align="center">2º</td><td>PROJ_2001</td><td align="center">0,6322</td></tr>
+<tr><td align="center">3º</td><td>PROJ_1837</td><td align="center">0,6296</td></tr>
+</tbody>
+</table>
 
 ### Peso nominal × influência efetiva
 
@@ -83,13 +118,25 @@ O critério C1 tem peso de 37,6% e responde por cerca de 47,7% da variação da 
 
 ## Critérios e pesos
 
-| Código | Campo | Interpretação adotada | Sentido | Normalização | Peso AHP |
-|:---:|---|---|---|:---:|:---:|
-| C1 | `Complexity_Score` | Complexidade do projeto | Maior = mais risco | x/máx | **37,60%** |
-| C2 | `Schedule_Pressure` | Pressão sobre o cronograma | Maior = mais risco | x/máx | **21,47%** |
-| C3 | `Historical_Risk_Incidents` | Incidentes históricos de risco | Maior = mais risco | x/máx | **21,47%** |
-| C4 | `Resource_Availability` | Disponibilidade de recursos | Menor = mais risco | mín/x | **12,09%** |
-| C5 | `Vendor_Reliability_Score` | Confiabilidade dos fornecedores | Menor = mais risco | mín/x | **7,38%** |
+<table width="100%">
+<thead>
+<tr>
+<th align="center" width="8%">Código</th>
+<th align="left" width="26%">Campo</th>
+<th align="left" width="24%">Interpretação adotada</th>
+<th align="left" width="18%">Sentido</th>
+<th align="center" width="12%">Normalização</th>
+<th align="center" width="12%">Peso AHP</th>
+</tr>
+</thead>
+<tbody>
+<tr><td align="center">C1</td><td><code>Complexity_Score</code></td><td>Complexidade do projeto</td><td>Maior = mais risco</td><td align="center">x/máx</td><td align="center"><b>37,60%</b></td></tr>
+<tr><td align="center">C2</td><td><code>Schedule_Pressure</code></td><td>Pressão sobre o cronograma</td><td>Maior = mais risco</td><td align="center">x/máx</td><td align="center"><b>21,47%</b></td></tr>
+<tr><td align="center">C3</td><td><code>Historical_Risk_Incidents</code></td><td>Incidentes históricos de risco</td><td>Maior = mais risco</td><td align="center">x/máx</td><td align="center"><b>21,47%</b></td></tr>
+<tr><td align="center">C4</td><td><code>Resource_Availability</code></td><td>Disponibilidade de recursos</td><td>Menor = mais risco</td><td align="center">mín/x</td><td align="center"><b>12,09%</b></td></tr>
+<tr><td align="center">C5</td><td><code>Vendor_Reliability_Score</code></td><td>Confiabilidade dos fornecedores</td><td>Menor = mais risco</td><td align="center">mín/x</td><td align="center"><b>7,38%</b></td></tr>
+</tbody>
+</table>
 
 > [!NOTE]
 > A documentação da base não detalha o significado e a escala desses campos. A interpretação acima é uma **hipótese do autor**.
@@ -98,35 +145,38 @@ O critério C1 tem peso de 37,6% e responde por cerca de 47,7% da variação da 
 
 **Pesos (AHP):** autovetor principal da matriz de comparação *A*, com os pesos somando 1.
 
-```text
-A · w = λmax · w          soma(w_i) = 1
-CI = (λmax − n) / (n − 1)  CR = CI / RI      (RI = 1,12 para n = 5)
+```math
+A\,w = \lambda_{\max}\,w, \qquad \sum_{i=1}^{n} w_i = 1
 ```
 
-**Normalização:**
+```math
+CI = \frac{\lambda_{\max} - n}{n - 1}, \qquad CR = \frac{CI}{RI} \qquad (RI = 1{,}12 \text{ para } n = 5)
+```
 
-```text
-maior = mais risco:   r_ij = x_ij / máx_j(x_ij)
-menor = mais risco:   r_ij = mín_j(x_ij) / x_ij
+**Normalização:** nos critérios em que maior valor significa mais risco (C1, C2 e C3) e nos critérios em que menor valor significa mais risco (C4 e C5), respectivamente:
+
+```math
+r_{ij} = \frac{x_{ij}}{\max_j(x_{ij})} \qquad\qquad r_{ij} = \frac{\min_j(x_{ij})}{x_{ij}}
 ```
 
 **Pontuação (SAW):**
 
-```text
-S_j = soma_i ( w_i · r_ij )
+```math
+S_j = \sum_{i=1}^{n} w_i \cdot r_{ij}
 ```
 
 Os projetos são ordenados da maior para a menor pontuação e, em caso de empate, pelo identificador.
 
 ### Julgamentos do AHP
 
-Os julgamentos foram feitos pelo autor, em caráter experimental e sem consulta a especialistas. Cada um está justificado em [`documentacao/julgamentos_ahp.json`](documentacao/julgamentos_ahp.json). Para testar outros pesos, edite esse arquivo e execute o programa novamente. Se o CR passar de 0,10, a execução é interrompida.
+Os julgamentos foram feitos pelo autor, em caráter experimental e sem consulta a especialistas. Cada um está justificado em <a href="documentacao/julgamentos_ahp.json"><code>documentacao/julgamentos_ahp.json</code></a>. Para testar outros pesos, edite esse arquivo e execute o programa novamente. Se o CR passar de 0,10, a execução é interrompida.
 
 ## Banco de dados
 
 O arquivo `resultados/priorizacao.db` é um banco relacional **SQLite** com seis tabelas.
 
 ```mermaid
+%%{init: {"theme": "base", "themeVariables": {"fontFamily": "Segoe UI, Arial, sans-serif", "primaryColor": "#E8F1FB", "primaryBorderColor": "#1F4E79", "primaryTextColor": "#0B2545", "lineColor": "#64748B"}}}%%
 erDiagram
     PROJETOS ||--o{ RESULTADOS : possui
     EXECUCOES ||--o{ RESULTADOS : gera
@@ -179,14 +229,19 @@ erDiagram
     }
 ```
 
-| Tabela | O que armazena |
-|---|---|
-| `projetos` | Identificador de cada projeto e os valores dos cinco campos utilizados |
-| `criterios` | Código, campo, nome e sentido de preferência de cada critério |
-| `execucoes` | Cada execução, com data e hora, número de projetos, λmax, CI, CR, situação de consistência e versão dos pesos |
-| `comparacoes_ahp` | Comparações par a par usadas em cada execução |
-| `pesos` | Peso de cada critério em cada execução |
-| `resultados` | Posição, pontuação e valores usados por cada projeto em cada execução |
+<table width="100%">
+<thead>
+<tr><th align="left" width="24%">Tabela</th><th align="left" width="76%">O que armazena</th></tr>
+</thead>
+<tbody>
+<tr><td><code>projetos</code></td><td>Identificador de cada projeto e os valores dos cinco campos utilizados</td></tr>
+<tr><td><code>criterios</code></td><td>Código, campo, nome e sentido de preferência de cada critério</td></tr>
+<tr><td><code>execucoes</code></td><td>Cada execução, com data e hora, número de projetos, λmax, CI, CR, situação de consistência e versão dos pesos</td></tr>
+<tr><td><code>comparacoes_ahp</code></td><td>Comparações par a par usadas em cada execução</td></tr>
+<tr><td><code>pesos</code></td><td>Peso de cada critério em cada execução</td></tr>
+<tr><td><code>resultados</code></td><td>Posição, pontuação e valores usados por cada projeto em cada execução</td></tr>
+</tbody>
+</table>
 
 As tabelas `comparacoes_ahp`, `pesos` e `resultados` usam o campo `execucao_id` para identificar a execução a que pertencem. Isso preserva a rastreabilidade: **dados → comparações → pesos → execução → resultado**.
 
@@ -242,13 +297,20 @@ python src/main.py
 
 O programa lê `dados/project_risk_raw_dataset.csv` e grava tudo em `resultados/`:
 
-| Saída | Conteúdo |
-|---|---|
-| `ranking_saw.csv` | Ranking completo dos 4.000 projetos |
-| `resultados.xlsx` | Matriz AHP, pesos, estatísticas, cenários e influência efetiva |
-| `priorizacao.db` | Banco SQLite com as execuções |
-| `*.png` | Gráficos |
-| `execucao.log` | Registro da execução e dos testes |
+<table width="100%">
+<thead>
+<tr><th align="left" width="24%">Saída</th><th align="left" width="76%">Conteúdo</th></tr>
+</thead>
+<tbody>
+<tr><td><code>ranking_saw.csv</code></td><td>Ranking completo dos 4.000 projetos</td></tr>
+<tr><td><code>resultados.xlsx</code></td><td>Matriz AHP, pesos, estatísticas, cenários e influência efetiva</td></tr>
+<tr><td><code>priorizacao.db</code></td><td>Banco SQLite com as execuções</td></tr>
+<tr><td><code>*.png</code></td><td>Gráficos</td></tr>
+<tr><td><code>execucao.log</code></td><td>Registro da execução e dos testes</td></tr>
+</tbody>
+</table>
+
+<br>
 
 Cada execução adiciona um registro ao banco. Para começar do zero, apague `resultados/priorizacao.db` antes de executar.
 
@@ -296,29 +358,55 @@ O modelo é avaliado em cinco frentes, e todas rodam a cada execução.
 
 **2. Cenários controlados.** Projetos sintéticos com resultado esperado definido antes da execução, construídos com os valores extremos da própria base.
 
-| Cenário | Construção | Esperado | Obtido |
-|---|---|---|---|
-| S1 · Dominância | Maior risco em todos os critérios | 1º lugar | 1º lugar |
-| S2 · Dominado | Menor risco em todos os critérios | Últimas posições | 4.004º de 4.004 |
-| S3 × S4 · Conflito | S3: só a complexidade em maior risco. S4: só recursos e fornecedores em maior risco | S3 à frente de S4 | S3 = 0,419 · S4 = 0,256 |
+<table width="100%">
+<thead>
+<tr>
+<th align="left" width="20%">Cenário</th>
+<th align="left" width="40%">Construção</th>
+<th align="left" width="20%">Esperado</th>
+<th align="left" width="20%">Obtido</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>S1 · Dominância</td><td>Maior risco em todos os critérios</td><td>1º lugar</td><td>1º lugar</td></tr>
+<tr><td>S2 · Dominado</td><td>Menor risco em todos os critérios</td><td>Últimas posições</td><td>4.004º de 4.004</td></tr>
+<tr><td>S3 × S4 · Conflito</td><td>S3: só a complexidade em maior risco. S4: só recursos e fornecedores em maior risco</td><td>S3 à frente de S4</td><td>S3 = 0,419<br>S4 = 0,256</td></tr>
+</tbody>
+</table>
+
+<br>
 
 **3. Análise de sensibilidade.** 200 simulações, com cada peso multiplicado por um fator sorteado entre 0,8 e 1,2 e renormalização para somar 1 (semente 42).
 
-| Medida | Média | Mínimo |
-|---|:---:|:---:|
-| Correlação de Spearman com o ranking base | 0,9966 | 0,9864 |
-| Projetos do top 100 mantidos | 90,4% | 81% |
+<table width="100%">
+<thead>
+<tr><th align="left" width="60%">Medida</th><th align="center" width="20%">Média</th><th align="center" width="20%">Mínimo</th></tr>
+</thead>
+<tbody>
+<tr><td>Correlação de Spearman com o ranking base</td><td align="center">0,9966</td><td align="center">0,9864</td></tr>
+<tr><td>Projetos do top 100 mantidos</td><td align="center">90,4%</td><td align="center">81%</td></tr>
+</tbody>
+</table>
+
+<br>
 
 **4. Cenários de pesos.** Ranking recalculado com pesos iguais e com cada critério assumindo 50% do peso total.
 
-| Cenário | Spearman vs. base | Top 100 em comum |
-|---|:---:|:---:|
-| Pesos iguais | 0,909 | 60 |
-| C1 com 50% | 0,960 | 68 |
-| C2 com 50% | 0,740 | 13 |
-| C3 com 50% | 0,682 | 39 |
-| C4 com 50% | 0,583 | 25 |
-| C5 com 50% | 0,843 | 40 |
+<table width="100%">
+<thead>
+<tr><th align="left" width="60%">Cenário</th><th align="center" width="20%">Spearman vs. base</th><th align="center" width="20%">Top 100 em comum</th></tr>
+</thead>
+<tbody>
+<tr><td>Pesos iguais</td><td align="center">0,909</td><td align="center">60</td></tr>
+<tr><td>C1 com 50%</td><td align="center">0,960</td><td align="center">68</td></tr>
+<tr><td>C2 com 50%</td><td align="center">0,740</td><td align="center">13</td></tr>
+<tr><td>C3 com 50%</td><td align="center">0,682</td><td align="center">39</td></tr>
+<tr><td>C4 com 50%</td><td align="center">0,583</td><td align="center">25</td></tr>
+<tr><td>C5 com 50%</td><td align="center">0,843</td><td align="center">40</td></tr>
+</tbody>
+</table>
+
+<br>
 
 **5. Comparação exploratória.** A pontuação é comparada ao campo `Risk_Level` da base (Spearman de aproximadamente 0,33). Como a origem desse campo é desconhecida, a comparação é **exploratória e não constitui validação definitiva**.
 
@@ -334,12 +422,12 @@ O modelo é avaliado em cinco frentes, e todas rodam a cada execução.
 
 ## Dados e licença
 
-- **Base:** *Project management Risk Raw*, de Tarek Adam, no [Kaggle](https://www.kaggle.com/datasets/ka66ledata/project-management-risk-raw).
-- **Licença dos dados:** [CDLA-Permissive-1.0](https://cdla.dev/permissive-1-0/).
+- **Base:** *Project management Risk Raw*, de Tarek Adam, no <a href="https://www.kaggle.com/datasets/ka66ledata/project-management-risk-raw">Kaggle</a>.
+- **Licença dos dados:** <a href="https://cdla.dev/permissive-1-0/">CDLA-Permissive-1.0</a>.
 - `dados/project_risk_raw_dataset.csv` é a cópia original, sem alterações.
 - `dados/dados_preparados.csv` é um arquivo **derivado**, gerado pelo programa, com o `Project_ID` e as cinco colunas dos critérios.
 
-Mais detalhes em [`dados/FONTE_DOS_DADOS.md`](dados/FONTE_DOS_DADOS.md).
+Mais detalhes em <a href="dados/FONTE_DOS_DADOS.md"><code>dados/FONTE_DOS_DADOS.md</code></a>.
 
 <details>
 <summary><b>Referências</b></summary>
@@ -372,8 +460,8 @@ Durante a elaboração deste Trabalho de Conclusão de Curso, o autor utilizou a
 
 <div align="center">
 
-**English summary** · Decision support system that ranks projects by risk-attention priority using **AHP** (weights with a consistency check, CR ≤ 0.10) and **SAW** (weighted sum), with every run stored in **SQLite**. It uses a synthetic public dataset (Kaggle, CDLA-Permissive-1.0), so results demonstrate the method and do not represent real projects. Main run: 4,000 projects, CR = 0.0074.
+<p><b>English summary</b> · Decision support system that ranks projects by risk-attention priority using <b>AHP</b> (weights with a consistency check, CR ≤ 0.10) and <b>SAW</b> (weighted sum), with every run stored in <b>SQLite</b>. It uses a synthetic public dataset (Kaggle, CDLA-Permissive-1.0), so results demonstrate the method and do not represent real projects. Main run: 4,000 projects, CR = 0.0074.</p>
 
-`pip install -r requirements.txt` · `python src/main.py`
+<p><code>pip install -r requirements.txt</code> · <code>python src/main.py</code></p>
 
 </div>
